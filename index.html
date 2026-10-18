@@ -78,6 +78,16 @@
 @media(max-width:390px){
  .player-island{width:56%!important;height:174px!important}
 }
+
+/* v4 修正：恢復導覽列與角色／備份操作，避免原本 CSS 將入口整組隱藏 */
+.top-actions{display:flex!important;gap:8px;flex-wrap:wrap;justify-content:flex-end;position:relative;z-index:1}
+.nav{display:flex!important;gap:8px;flex-wrap:wrap;margin:16px 0}
+@media(max-width:800px){
+  .top-actions{display:flex!important;max-width:none;justify-content:flex-start}
+  .nav{display:flex!important}
+  .nav button{flex:1 1 auto}
+}
+
 </style>
 </head>
 <body>
