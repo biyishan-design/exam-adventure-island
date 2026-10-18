@@ -63,31 +63,6 @@
 .player-menu-label{font-size:.85rem;color:var(--muted);margin:0 0 12px}
 @media(max-width:650px){.player-island{left:50%!important;top:50%!important;width:48%!important;height:172px!important;transform:translate(-50%,-50%);z-index:20!important}.player-island .player-home-icon{margin-top:23px}.world-map{min-height:650px}}
 @media(max-width:390px){.player-island{left:50%!important;top:50%!important;width:50%!important;height:155px!important;transform:translate(-50%,-50%);z-index:20!important}.world-map{min-height:620px}}
-
-/* v3：主島加大置中、收藏冊依系統分級分組 */
-.player-island{width:38%!important;height:220px!important}
-.player-island .player-home-icon{font-size:clamp(2.2rem,5vw,3.2rem)!important;margin-top:34px!important}
-.player-island strong{font-size:clamp(.85rem,2vw,1.08rem)!important;padding:7px 15px!important}
-.earned-tier-group{margin-top:8px}
-.earned-tier-group:first-child h3{margin-top:0!important}
-@media(max-width:650px){
- .player-island{width:54%!important;height:190px!important}
- .player-island .player-home-icon{margin-top:27px!important}
- .player-island strong{white-space:normal;max-width:90%}
-}
-@media(max-width:390px){
- .player-island{width:56%!important;height:174px!important}
-}
-
-/* v4 修正：恢復導覽列與角色／備份操作，避免原本 CSS 將入口整組隱藏 */
-.top-actions{display:flex!important;gap:8px;flex-wrap:wrap;justify-content:flex-end;position:relative;z-index:1}
-.nav{display:flex!important;gap:8px;flex-wrap:wrap;margin:16px 0}
-@media(max-width:800px){
-  .top-actions{display:flex!important;max-width:none;justify-content:flex-start}
-  .nav{display:flex!important}
-  .nav button{flex:1 1 auto}
-}
-
 </style>
 </head>
 <body>
@@ -201,17 +176,17 @@ function toast(msg){const el=document.getElementById('toast');el.textContent=msg
 function confetti(){const bits=['✨','⭐','🎉','🌟','💫'];for(let i=0;i<18;i++){const e=document.createElement('span');e.className='confetti';e.textContent=bits[i%bits.length];e.style.left=Math.random()*100+'vw';e.style.animationDelay=Math.random()*.4+'s';document.body.append(e);setTimeout(()=>e.remove(),2200)}}
 function dateLabel(s){if(!s)return '尚未設定考試日期';const d=Math.ceil((new Date(s+'T23:59:59')-new Date())/86400000);if(d<0)return `已過考試日 ${Math.abs(d)} 天`;if(d===0)return '今天考試！';return `距離考試 ${d} 天`}
 function certTier(name,type='金融證照'){
- const n=String(name||'').replace(/[\s　（）()]/g,'').toUpperCase();
- if(['英文證照','日文證照','其他語言證照'].includes(type))return {name:'語言級別',label:'🌐 語言級別',icon:'🌐'};
+ const n=String(name||'').replace(/[\s　]/g,'');
+ if(type==='英文證照')return {name:'語言分級',label:'依檢定級別判定',icon:'🌐'};
+ if(type==='日文證照')return {name:'語言分級',label:'依檢定級別判定',icon:'🌐'};
+ if(type==='其他語言證照')return {name:'語言分級',label:'依檢定級別判定',icon:'🌐'};
  if(/證券分析師|CIIA|特許金融分析師|CFA/.test(n))return {name:'專家級',label:'👑 專家級',icon:'👑'};
  if(/高級業務員|高業|高級證券/.test(n))return {name:'進階級',label:'🏆 進階級',icon:'🏆'};
- if(/金融市場常識與職業道德|金融市場常識|職業道德|金融常識/.test(n))return {name:'入門級',label:'🌱 入門級',icon:'🌱'};
+ if(/金融市場常識與職業道德|職業道德|金融常識/.test(n))return {name:'入門級',label:'🌱 入門級',icon:'🌱'};
  if(/證券商業務員|初級業務員|初業/.test(n))return {name:'初階級',label:'🌿 初階級',icon:'🌿'};
- if(/信託|銀行內部控制|銀行內控|銀行內部控制與內部稽核|產物保險業務員|財產保險|產險|投信投顧相關法規|投信投顧一科|期貨商業務員|人身保險業務員|投資型保險商品/.test(n))return {name:'初階級',label:'🌿 初階級',icon:'🌿'};
+ if(/信託|銀行內部控制|銀行內控|產物保險業務員|產險|投信投顧相關法規|投信投顧一科/.test(n))return {name:'初階級',label:'🌿 初階級',icon:'🌿'};
  if(/期貨|授信|外匯|理財規劃/.test(n))return {name:'中階級',label:'🌳 中階級',icon:'🌳'};
- if(/TOEIC|多益|全民英檢|GEPT/.test(n))return {name:'英文檢定級別',label:'🌐 英文檢定級別',icon:'🌐'};
- if(/JLPT|日本語能力試驗|日檢/.test(n))return {name:'日文檢定級別',label:'🌐 日文檢定級別',icon:'🌐'};
- return {name:'待分類',label:'❔ 待分類（可補充完整名稱）',icon:'❔'};
+ return {name:'待分類',label:'❔ 待分類',icon:'❔'};
 }
 function renderCerts(target='certList'){const el=document.getElementById(target);if(!el)return;if(!state.certs.length){el.innerHTML='<div class="empty">還沒有證照，新增一張開始冒險吧！</div>';return}
 el.innerHTML=state.certs.map(c=>{const tier=certTier(c.name,c.type||'金融證照');return `<article class="cert"><div class="cert-icon">${esc(c.icon||'📘')}</div><div><div class="cert-title">${esc(c.name)}</div><div class="cert-meta">${esc(tier.label)} · 📅 ${esc(dateLabel(c.examDate))} · 進度 ${Number(c.progress)||0}%</div><div class="progress"><span style="width:${Math.max(0,Math.min(100,Number(c.progress)||0))}%"></span></div></div><div class="cert-actions"><button class="secondary small" data-edit-cert="${esc(c.id)}">編輯</button><button class="soft small" data-delete-cert="${esc(c.id)}" aria-label="刪除證照">✕</button></div></article>`}).join('')}
@@ -238,15 +213,7 @@ function renderLanguage(){
  el.innerHTML=state.languageLogs.length?[...state.languageLogs].reverse().map(x=>`<div class="task"><div class="task-name">${esc(x.language)}</div><div><div class="task-name">${Number(x.words)} 個單字</div><div class="task-sub">${esc(x.date)} · 本次紀錄</div></div><button class="soft small" data-delete-language="${esc(x.id)}">✕</button></div>`).join(''):'<div class="empty">記錄今天學到的英文、日文或其他語言單字。</div>';
 }
 function openLanguage(){openModal('記錄語言單字',`<div class="field"><label for="language">語言</label><select id="language" name="language"><option>英文</option><option>日文</option><option>其他語言</option></select></div>${field('本次新學單字數','words','number','','required min="1" max="10000" step="1" placeholder="例如 15"')}${field('日期','date','date',today(),'required')}<p class="section-note">每累積 10 個單字才計算 10 XP。例如 9 個單字得 0 XP；10 個得 10 XP；累積 19 個仍為 10 XP。零頭會保留。</p>`,d=>{const words=Math.floor(Number(d.words)||0);if(words<1){toast('請輸入至少 1 個單字');return}const before=languageXP();state.languageLogs.push({id:uid(),language:d.language,words,date:d.date});const gained=languageXP()-before;if(gained){state.xp+=gained;state.xpBalance=(Number(state.xpBalance)||0)+gained;toast(`語言學習完成！獲得 ${gained} XP`);confetti()}else toast(`已記錄 ${words} 個單字；累積滿 10 個才會獲得 XP`);render()},'記錄單字')}
-function renderEarned(){
- const el=document.getElementById('earnedList');
- if(!state.earnedCerts.length){el.innerHTML='<div class="empty">把已經考過或取得的證照加入收藏冊，系統會依證照名稱與類型自動分級，再依你選的難度估算 XP。</div>';return}
- const tiers=['👑 專家級','🏆 進階級','🌳 中階級','🌿 初階級','🌱 入門級','🌐 語言級別','🌐 英文檢定級別','🌐 日文檢定級別','❔ 待分類（可補充完整名稱）'];
- const groups={};
- state.earnedCerts.forEach(c=>{const label=certTier(c.name,c.type||'金融證照').label;(groups[label] ||= []).push(c)});
- const ordered=[...tiers.filter(t=>groups[t]),...Object.keys(groups).filter(t=>!tiers.includes(t))];
- el.innerHTML=ordered.map(tierLabel=>`<section class="earned-tier-group"><h3 style="margin:18px 0 10px;padding:10px 12px;border-radius:12px;background:#f4f3ff;color:#5547b8">${esc(tierLabel)} <span style="font-size:.82rem;font-weight:600">· ${groups[tierLabel].length} 張</span></h3><div class="cert-list">${groups[tierLabel].map(c=>{const tier=certTier(c.name,c.type||'金融證照');return `<article class="cert"><div class="cert-icon">${esc(tier.icon||'🎓')}</div><div><div class="cert-title">${esc(c.name)}</div><div class="cert-meta">${esc(c.type||'金融證照')} · ${esc(c.date||'日期未填')} · 系統分級：${esc(tier.label)} · 紀念難度：${esc(c.difficulty||'未設定')}</div><div class="cert-meta">紀念獎勵：${Number(c.xp)||0} XP ${c.credited?'（已領取）':'（尚未領取）'}</div></div><div class="cert-actions">${c.credited?'':`<button class="primary small" data-credit-earned="${esc(c.id)}">領取 XP</button>`}<button class="soft small" data-delete-earned="${esc(c.id)}">✕</button></div></article>`}).join('')}</div></section>`).join('');
-}
+function renderEarned(){const el=document.getElementById('earnedList');if(!state.earnedCerts.length){el.innerHTML='<div class="empty">把已經考過或取得的證照加入收藏冊，系統會依你選擇的類型與難度估算 XP。</div>';return}el.innerHTML=state.earnedCerts.map(c=>{const tier=certTier(c.name,c.type);return `<article class="cert"><div class="cert-icon">🎓</div><div><div class="cert-title">${esc(c.name)}</div><div class="cert-meta">${esc(c.type)} · ${esc(c.date||'日期未填')} · 自動分級：${esc(tier.label)} · 紀念難度：${esc(c.difficulty)}</div><div class="cert-meta">紀念獎勵：${Number(c.xp)} XP ${c.credited?'（已領取）':'（尚未領取）'}</div></div><div class="cert-actions">${c.credited?'':`<button class="primary small" data-credit-earned="${esc(c.id)}">領取 XP</button>`}<button class="soft small" data-delete-earned="${esc(c.id)}">✕</button></div></article>`}).join('')}
 function openEarned(){
  const presets=['金融市場常識與職業道德','證券商業務員（初業）','證券商高級業務員（高業）','投信投顧相關法規','證券分析師','信託業業務人員','銀行內部控制與內部稽核','期貨商業務員','人身保險業務員','財產保險業務員','投資型保險商品業務員','多益 TOEIC','全民英檢','日本語能力試驗 JLPT','其他／自行輸入'];
  const fields=`<div class="field"><label for="quickEarnedCert">快速選擇證照</label><select id="quickEarnedCert" name="quickEarnedCert"><option value="">請選擇常見證照，或在下方自行輸入</option>${presets.map(n=>`<option value="${esc(n)}">${esc(n)}</option>`).join('')}</select></div>${field('證照名稱（可自行輸入／修改）','name','text','','required maxlength="80" placeholder="選單選好後會自動帶入，也可以自己輸入"')}<div class="field"><label for="type">證照類型</label><select id="type" name="type"><option>金融證照</option><option>英文證照</option><option>日文證照</option><option>其他語言證照</option><option>其他專業證照</option></select></div><div class="field"><label>系統分級預覽</label><div id="earnedTierPreview" class="section-note" style="margin:0;padding:10px;background:#f5f3ff;border-radius:10px">選擇或輸入證照名稱後，自動判定分級。</div></div><div class="field"><label for="difficulty">紀念獎勵難度／投入程度</label><select id="difficulty" name="difficulty"><option value="入門">入門</option><option value="初階">初階</option><option value="中階">中階</option><option value="進階">進階</option><option value="高階">高階</option></select></div>${field('考取／考試日期（選填）','date','date','')}<p class="section-note">系統分級會依證照名稱自動判定；紀念 XP 則依你選的難度計算：入門 100、初階 200、中階 350、進階 500、高階 700 XP。兩者分開計算。</p>`;
